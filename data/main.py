@@ -1,6 +1,6 @@
 import telebot
 
-bot = telebot.TeleBot('2062309923:AAExMItj8JzG6w_ybDm0dquLHPeEiwCVbZQ')
+bot = telebot.TeleBot('')
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
     if message.text == "Проверить юбилейные билеты" \
