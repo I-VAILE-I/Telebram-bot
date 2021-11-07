@@ -1,6 +1,8 @@
 import telebot
+
 token = open("token.txt", "r")
 bot = telebot.TeleBot(token.read())
+
 @bot.message_handler(commands=['start'])
 def start_message(message):
 	bot.send_message(message.chat.id,'Вас приветствует Бот Эйситристик, здесь вы сможете узнавать о выходе юбилейных единых билетов в Московском метрополитене. \nЧто бы проверить информацию о билетах на ближайшие 7 дней, напишите команду "Проверить юбилейные билеты" или сокращенно "пюб".')
