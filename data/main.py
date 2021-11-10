@@ -19,13 +19,13 @@ today_date.reverse()
 
 loop_list = []
 
-day = 4 -1
-month = 11
-year = 2021
+# day = 4 -1
+# month = 11
+# year = 2021
 
-#day = int(today_date[0]) -1
-#month = int(today_date[1])
-#year = int(today_date[2])
+day = int(today_date[0]) -1
+month = int(today_date[1])
+year = int(today_date[2])
 
 last_day = calendar.monthrange(year,month)[-1]
 week_list = []

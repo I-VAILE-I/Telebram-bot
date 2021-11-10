@@ -61,6 +61,8 @@ tickets_info = soup.find_all('p')
 today_date = datetime.date.isoformat(datetime.date.today()).split('-')
 today_date.reverse()
 
+print(tickets_info)
+
 loop_list = []
 
 day = 4 -1
@@ -114,7 +116,6 @@ week_list = []
 #     sum_date = ''.join(loop_list)
 #     week_list.append(sum_date)
 #     loop_list.clear()
-
 
 #print(today_date, week_list)
 

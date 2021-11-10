@@ -26,6 +26,8 @@ photo_response = requests.get(url)
 photo_soup = BeautifulSoup(photo_response.text, 'lxml')
 photo_url = photo_soup.find_all(width="333")
 
+
+
 img_url = []
 photo = []
 znach = False
