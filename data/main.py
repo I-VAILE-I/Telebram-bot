@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import datetime
 import calendar
 from data.testing.web_site_parser import availability_of_tickets
+from data.testing.geting_photo_url import tickets_photos
 
 token = open("token.txt", "r")
 bot = telebot.TeleBot(token.read())
@@ -29,6 +30,17 @@ year = 2021
 last_day = calendar.monthrange(year,month)[-1]
 week_list = []
 
+url = 'https://mosmetro.ru/passengers/information/special-tickets/'
+photo_response = requests.get(url)
+photo_soup = BeautifulSoup(photo_response.text, 'lxml')
+photo_url = photo_soup.find_all(width="333")
+
+img_url = []
+photo = []
+znach = False
+otriv = 0
+kolvo = 1 * 2
+
 @bot.message_handler(commands=['start'])
 def start_message(message):
 	bot.send_message(message.chat.id,'Вас приветствует Бот Эйситристик, здесь вы сможете узнавать о выходе юбилейных единых билетов в Московском метрополитене. \nЧто бы проверить информацию о билетах на ближайшие 7 дней, напишите команду "Проверить юбилейные билеты" или сокращенно "пюб".')
@@ -38,7 +50,8 @@ def get_text_messages(message):
     if message.text == "Проверить юбилейные билеты" or message.text == "проверить юбилейные билеты" or message.text == "пюб":
         bot.send_message(message.from_user.id, "Привет, я нашел вот такие юбилейные билеты:")
         bot.send_message(message.chat.id, availability_of_tickets(tickets_info, loop_list, day, month, year, last_day, week_list))
-        #bot.send_photo(message.from_user.id, "https://mosmetro.ru/local/assets/imgs/special-tickets/photo_2021-11-01 16.15.34.jpeg") bot.send_photo(id, photo, caption='текст')
+        for i in range(len(tickets_photos(photo_url, otriv, kolvo, znach, photo, img_url))):
+            bot.send_photo(message.from_user.id, tickets_photos(photo_url, otriv, kolvo, znach, photo, img_url)[i]) #bot.send_photo(id, photo, caption='текст')
     elif message.text == "/help":
         bot.send_message(message.from_user.id, 'Напиши "Проверить юбилейные билеты" или сокращенно "пюб"')
     else:
