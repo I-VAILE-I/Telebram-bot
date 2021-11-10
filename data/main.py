@@ -41,6 +41,9 @@ znach = False
 otriv = 0
 kolvo = 1 * 2
 
+itog_date = availability_of_tickets(tickets_info, loop_list, day, month, year, last_day, week_list)
+itog_photo = tickets_photos(photo_url, otriv, kolvo, znach, photo, img_url)
+
 @bot.message_handler(commands=['start'])
 def start_message(message):
 	bot.send_message(message.chat.id,'Вас приветствует Бот Эйситристик, здесь вы сможете узнавать о выходе юбилейных единых билетов в Московском метрополитене. \nЧто бы проверить информацию о билетах на ближайшие 7 дней, напишите команду "Проверить юбилейные билеты" или сокращенно "пюб".')
@@ -49,9 +52,9 @@ def start_message(message):
 def get_text_messages(message):
     if message.text == "Проверить юбилейные билеты" or message.text == "проверить юбилейные билеты" or message.text == "пюб":
         bot.send_message(message.from_user.id, "Привет, я нашел вот такие юбилейные билеты:")
-        bot.send_message(message.chat.id, availability_of_tickets(tickets_info, loop_list, day, month, year, last_day, week_list))
-        for i in range(len(tickets_photos(photo_url, otriv, kolvo, znach, photo, img_url))):
-            bot.send_photo(message.from_user.id, tickets_photos(photo_url, otriv, kolvo, znach, photo, img_url)[i]) #bot.send_photo(id, photo, caption='текст')
+        bot.send_message(message.chat.id, itog_date)
+        for i in range(len(itog_photo)):
+            bot.send_photo(message.from_user.id, itog_photo[i], "Их внешний вид.") #bot.send_photo(id, photo, caption='текст')
     elif message.text == "/help":
         bot.send_message(message.from_user.id, 'Напиши "Проверить юбилейные билеты" или сокращенно "пюб"')
     else:
