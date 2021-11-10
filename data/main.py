@@ -11,6 +11,7 @@ def start_message(message):
 def get_text_messages(message):
     if message.text == "Проверить юбилейные билеты" or message.text == "проверить юбилейные билеты" or message.text == "пюб":
         bot.send_message(message.from_user.id, "Привет, я нашел вот такие юбилейные билеты:")
+        #bot.send_photo(message.from_user.id, "https://mosmetro.ru/local/assets/imgs/special-tickets/photo_2021-11-01 16.15.34.jpeg")
     elif message.text == "/help":
         bot.send_message(message.from_user.id, 'Напиши "Проверить юбилейные билеты" или сокращенно "пюб"')
     else:

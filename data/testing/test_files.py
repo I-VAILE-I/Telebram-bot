@@ -3,7 +3,13 @@ from bs4 import BeautifulSoup
 import datetime
 import calendar
 
-#def availability_of_tickets():
+def availability_of_tickets(tickets_info, week_list):
+    for tickets_info in tickets_info:
+        for i in range(len(week_list)):
+            search_date = week_list[i]
+            if search_date in tickets_info.text:
+                print(*tickets_info, sep='')
+
 
 url = 'https://mosmetro.ru/passengers/information/special-tickets/'
 response = requests.get(url)
@@ -15,13 +21,13 @@ today_date.reverse()
 
 loop_list = []
 
-day = 11 -1
-month = 11
-year = 2020
+#day = 11 -1
+#month = 11
+#year = 2020
 
-#day = int(today_date[0]) -1
-#month = int(today_date[1])
-#year = int(today_date[2])
+day = int(today_date[0]) -1
+month = int(today_date[1])
+year = int(today_date[2])
 
 last_day = calendar.monthrange(year,month)[-1]
 week_list = []
@@ -69,8 +75,4 @@ for _ in range(8): #week dates loop
 
 print(today_date, week_list)
 
-for tickets_info in tickets_info:
-    for i in range(len(week_list)):
-        search_date = week_list[i]
-        if search_date in tickets_info.text:
-            print(*tickets_info, sep='')
+availability_of_tickets(tickets_info, week_list)
