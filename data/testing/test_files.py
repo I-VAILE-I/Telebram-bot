@@ -69,7 +69,7 @@ for _ in range(8): #week dates loop
     loop_list.append(str(year))
     loop_list.insert(1, '.')
     loop_list.insert(3, '.')
-    sum_date = loop_list[0] + loop_list[1] + loop_list[2] + loop_list[3] + loop_list[4]
+    sum_date = ''.join(loop_list)
     week_list.append(sum_date)
     loop_list.clear()
 
