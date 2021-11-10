@@ -9,48 +9,68 @@ url = 'https://mosmetro.ru/passengers/information/special-tickets/'
 response = requests.get(url)
 soup = BeautifulSoup(response.text, 'lxml')
 tickets_info = soup.find_all('p')
+
 today_date = datetime.date.isoformat(datetime.date.today()).split('-')
 today_date.reverse()
-day = int(today_date[0]) - 1 #не учел если дата == 1 ))))
-month = int(today_date[1])
-year = int(today_date[2])
+
+loop_list = []
+
+day = 11 -1
+month = 11
+year = 2020
+
+#day = int(today_date[0]) -1
+#month = int(today_date[1])
+#year = int(today_date[2])
+
 last_day = calendar.monthrange(year,month)[-1]
-today_date.clear()
 week_list = []
-for _ in range(8):
+
+for _ in range(8): #week dates loop
     if day == last_day:
         day = 1
-        if day < 10:
-            day_next = '0' + str(day)
-            today_date.insert(0, day_next)
-            day = int(day_next)
+        day_next = '0' + str(day)
+        loop_list.insert(0, day_next)
+        day = int(day_next)
         if month == 12:
             month = 1
+            month_next = '0' + str(month)
+            loop_list.insert(1, month_next)
+            month = int(month_next)
+            year += 1
+            loop_list.append(str(year))
         else:
             month += 1
             if month < 10:
                 month_next = '0' + str(month)
-                today_date.append(month_next)
+                loop_list.insert(1, month_next)
                 month = int(month_next)
     else:
         if day != last_day:
-            today_date.append(str(month))
+            if month < 10:
+                month_next = '0' + str(month)
+                loop_list.append(month_next)
+                month = int(month_next)
+            else:
+                loop_list.append(str(month))
         day += 1
         if day < 10:
             day_next = '0' + str(day)
-            today_date.insert(0, day_next)
+            loop_list.insert(0, day_next)
             day = int(day_next)
         else:
-            today_date.insert(0, str(day))
-    today_date.append(str(year))
-    today_date.insert(1, '.')
-    today_date.insert(3, '.')
-    sum_date = today_date[0] + today_date[1] + today_date[2] + today_date[3] + today_date[4]
+            loop_list.insert(0, str(day))
+    loop_list.append(str(year))
+    loop_list.insert(1, '.')
+    loop_list.insert(3, '.')
+    sum_date = loop_list[0] + loop_list[1] + loop_list[2] + loop_list[3] + loop_list[4]
     week_list.append(sum_date)
-    print(today_date, week_list)
-    today_date.clear()
+    loop_list.clear()
 
-today_dateT = '08.11.2021' #example
+print(today_date, week_list)
+
 for tickets_info in tickets_info:
-    if today_dateT in tickets_info.text:
-        print(*tickets_info, sep='')
+    for i in range(len(week_list)):
+        search_date = week_list[i]
+        if search_date in tickets_info.text:
+            print(*tickets_info, sep='')
