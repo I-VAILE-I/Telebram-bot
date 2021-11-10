@@ -56,8 +56,8 @@ def get_text_messages(message):
         for i in range(len(itog_photo)):
             bot.send_photo(message.from_user.id, itog_photo[i], "Их внешний вид.") #bot.send_photo(id, photo, caption='текст')
     elif message.text == "/help":
-        bot.send_message(message.from_user.id, 'Напиши "Проверить юбилейные билеты" или сокращенно "пюб"')
+        bot.send_message(message.from_user.id, 'Напишите "Проверить юбилейные билеты" или сокращенно "пюб"')
     else:
-        bot.send_message(message.from_user.id, "Команда не распознана. Напиши /help.")
+        bot.send_message(message.from_user.id, "Команда не распознана. Напишите /help.")
 
 bot.polling(none_stop=True, interval=0)
