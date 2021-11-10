@@ -49,7 +49,8 @@ def availability_of_tickets(tickets_info, loop_list, day, month, year, last_day,
             search_date = week_list[i]
             if search_date in tickets_info.text:
                 # print(*tickets_info, sep='')
-                return print(''.join(tickets_info))
+                name_ticket = ''.join(tickets_info)
+                return name_ticket
 
 
 url = 'https://mosmetro.ru/passengers/information/special-tickets/'
