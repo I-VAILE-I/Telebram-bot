@@ -3,12 +3,53 @@ from bs4 import BeautifulSoup
 import datetime
 import calendar
 
-def availability_of_tickets(tickets_info, week_list):
+def availability_of_tickets(tickets_info, loop_list, day, month, year, last_day, week_list):
+    for _ in range(8):  # week dates loop
+        if day == last_day:
+            day = 1
+            day_next = '0' + str(day)
+            loop_list.insert(0, day_next)
+            day = int(day_next)
+            if month == 12:
+                month = 1
+                month_next = '0' + str(month)
+                loop_list.insert(1, month_next)
+                month = int(month_next)
+                year += 1
+                loop_list.append(str(year))
+            else:
+                month += 1
+                if month < 10:
+                    month_next = '0' + str(month)
+                    loop_list.insert(1, month_next)
+                    month = int(month_next)
+        else:
+            if day != last_day:
+                if month < 10:
+                    month_next = '0' + str(month)
+                    loop_list.append(month_next)
+                    month = int(month_next)
+                else:
+                    loop_list.append(str(month))
+            day += 1
+            if day < 10:
+                day_next = '0' + str(day)
+                loop_list.insert(0, day_next)
+                day = int(day_next)
+            else:
+                loop_list.insert(0, str(day))
+        loop_list.append(str(year))
+        loop_list.insert(1, '.')
+        loop_list.insert(3, '.')
+        sum_date = ''.join(loop_list)
+        week_list.append(sum_date)
+        loop_list.clear()
     for tickets_info in tickets_info:
         for i in range(len(week_list)):
             search_date = week_list[i]
             if search_date in tickets_info.text:
-                print(*tickets_info, sep='')
+                # print(*tickets_info, sep='')
+                return print(''.join(tickets_info))
 
 
 url = 'https://mosmetro.ru/passengers/information/special-tickets/'
@@ -24,56 +65,56 @@ loop_list = []
 day = 4 -1
 month = 11
 year = 2021
-
-#day = int(today_date[0]) -1
-#month = int(today_date[1])
-#year = int(today_date[2])
+#
+# #day = int(today_date[0]) -1
+# #month = int(today_date[1])
+# #year = int(today_date[2])
 
 last_day = calendar.monthrange(year,month)[-1]
 week_list = []
 
-for _ in range(8): #week dates loop
-    if day == last_day:
-        day = 1
-        day_next = '0' + str(day)
-        loop_list.insert(0, day_next)
-        day = int(day_next)
-        if month == 12:
-            month = 1
-            month_next = '0' + str(month)
-            loop_list.insert(1, month_next)
-            month = int(month_next)
-            year += 1
-            loop_list.append(str(year))
-        else:
-            month += 1
-            if month < 10:
-                month_next = '0' + str(month)
-                loop_list.insert(1, month_next)
-                month = int(month_next)
-    else:
-        if day != last_day:
-            if month < 10:
-                month_next = '0' + str(month)
-                loop_list.append(month_next)
-                month = int(month_next)
-            else:
-                loop_list.append(str(month))
-        day += 1
-        if day < 10:
-            day_next = '0' + str(day)
-            loop_list.insert(0, day_next)
-            day = int(day_next)
-        else:
-            loop_list.insert(0, str(day))
-    loop_list.append(str(year))
-    loop_list.insert(1, '.')
-    loop_list.insert(3, '.')
-    sum_date = ''.join(loop_list)
-    week_list.append(sum_date)
-    loop_list.clear()
+# for _ in range(8): #week dates loop
+#     if day == last_day:
+#         day = 1
+#         day_next = '0' + str(day)
+#         loop_list.insert(0, day_next)
+#         day = int(day_next)
+#         if month == 12:
+#             month = 1
+#             month_next = '0' + str(month)
+#             loop_list.insert(1, month_next)
+#             month = int(month_next)
+#             year += 1
+#             loop_list.append(str(year))
+#         else:
+#             month += 1
+#             if month < 10:
+#                 month_next = '0' + str(month)
+#                 loop_list.insert(1, month_next)
+#                 month = int(month_next)
+#     else:
+#         if day != last_day:
+#             if month < 10:
+#                 month_next = '0' + str(month)
+#                 loop_list.append(month_next)
+#                 month = int(month_next)
+#             else:
+#                 loop_list.append(str(month))
+#         day += 1
+#         if day < 10:
+#             day_next = '0' + str(day)
+#             loop_list.insert(0, day_next)
+#             day = int(day_next)
+#         else:
+#             loop_list.insert(0, str(day))
+#     loop_list.append(str(year))
+#     loop_list.insert(1, '.')
+#     loop_list.insert(3, '.')
+#     sum_date = ''.join(loop_list)
+#     week_list.append(sum_date)
+#     loop_list.clear()
 
 
 #print(today_date, week_list)
 
-availability_of_tickets(tickets_info, week_list)
+availability_of_tickets(tickets_info, loop_list, day, month, year, last_day, week_list)
