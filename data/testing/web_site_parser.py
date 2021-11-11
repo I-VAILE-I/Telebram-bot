@@ -48,7 +48,6 @@ def availability_of_tickets(tickets_info, loop_list, day, month, year, last_day,
         for i in range(len(week_list)):
             search_date = week_list[i]
             if search_date in tickets_info.text:
-                # print(*tickets_info, sep='')
                 name_ticket = ''.join(tickets_info)
                 return name_ticket
 
@@ -61,7 +60,13 @@ tickets_info = soup.find_all('p')
 today_date = datetime.date.isoformat(datetime.date.today()).split('-')
 today_date.reverse()
 
-print(tickets_info)
+only_tickets = []
+for tickets_info in tickets_info:
+    if 'Билет' in tickets_info.text:
+        print(tickets_info.text)
+        only_tickets.append(tickets_info.text)
+
+print(only_tickets)
 
 loop_list = []
 
@@ -119,4 +124,4 @@ week_list = []
 
 #print(today_date, week_list)
 
-availability_of_tickets(tickets_info, loop_list, day, month, year, last_day, week_list)
+# availability_of_tickets(tickets_info, loop_list, day, month, year, last_day, week_list)
