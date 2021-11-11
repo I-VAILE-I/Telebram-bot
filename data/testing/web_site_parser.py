@@ -49,6 +49,7 @@ def availability_of_tickets(tickets_info, loop_list, day, month, year, last_day,
             search_date = week_list[i]
             if search_date in tickets_info.text:
                 name_tickets.append(''.join(tickets_info))
+
             return name_tickets
 
 
@@ -131,5 +132,6 @@ for tickets_info in tickets_info:
         if search_date in tickets_info.text:
             # print(*tickets_info, sep='')
             name_tickets.append(''.join(tickets_info))
+
 print(name_tickets)
 print(availability_of_tickets(tickets_info, loop_list, day, month, year, last_day, week_list, name_tickets))

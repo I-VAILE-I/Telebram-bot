@@ -1,6 +1,6 @@
+import requests
 import datetime
 import calendar
-import requests
 from bs4 import BeautifulSoup
 from data.testing.web_site_parser import availability_of_tickets
 
@@ -71,10 +71,7 @@ otriv = 0
 kolvo = len(itog_tickets) *2 # 1 text about ticket = 2 tickets photo
 id_photo = []
 used_ide = []
-# print(itog_tickets, len(itog_tickets))
-# for id in range(len(itog_tickets)):
-#     id_photo.append(only_tickets.index(str(itog_tickets[id]))-1)
-# print(id_photo)
+
 using_id = 0
 print(availability_of_tickets(tickets_info, loop_list, day, month, year, last_day, week_list, name_tickets))
 for i in range(len(itog_tickets)*2):
@@ -86,9 +83,9 @@ for i in range(len(itog_tickets)*2):
         else:
             break
     otriv = 0
-    print(id_photo)
+    # print(id_photo)
     rashodnik = str(photo_url[id_photo[i]]) + '"'
-    print(i, rashodnik)
+    # print(i, rashodnik)
     rashodnik.split('"')
     for j in range(len(rashodnik)):
         if rashodnik[j] == '"' and otriv != 1:
