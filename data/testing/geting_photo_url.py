@@ -5,6 +5,9 @@ from bs4 import BeautifulSoup
 from data.testing.web_site_parser import availability_of_tickets
 
 def tickets_photos(photo_url, otriv, kolvo, znach, photo, img_url):
+    """
+    Функция делает то-то
+    """
     for i in range(kolvo):
         otriv = 0
         rashodnik = str(photo_url[i]) + '"'
