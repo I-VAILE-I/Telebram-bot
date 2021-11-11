@@ -30,6 +30,7 @@ photo_soup = BeautifulSoup(photo_response.text, 'lxml')
 photo_url = photo_soup.find_all(width="333")
 
 
+
 url = 'https://mosmetro.ru/passengers/information/special-tickets/'
 response = requests.get(url)
 soup = BeautifulSoup(response.text, 'lxml')
