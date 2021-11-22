@@ -144,13 +144,17 @@ def get_text_messages(message: Message):
         tickets_all_on_page: List[Ticket] = get_all_tickets_on_page(url=URL)
         tickets_on_week: List[Ticket] = get_tickets_by_date(tickets=tickets, start=start, end=end)
         bot.send_message(message.from_user.id, "Привет, я нашел вот такие юбилейные билеты:")
+        id = -1
         for i in range(len(tickets_on_week)):
             ticket_name = tickets_on_week[i].name
             ticket_date = tickets_on_week[i].date.strftime('%d.%m.%Y')
-            for j in range(amount):
-                bot.send_message(message.from_user.id, only_tickets[j])
-                bot.send_photo(message.from_user.id, photo_list[j], caption=ticket_date)
-                bot.send_photo(message.from_user.id, photo_list[j+1], caption=ticket_date)
+            for j in range(1):
+                bot.send_message(message.from_user.id, ticket_name)
+                id += 1
+                bot.send_photo(message.from_user.id, photo_list[id], caption=ticket_date)
+                id += 1
+                bot.send_photo(message.from_user.id, photo_list[id], caption=ticket_date)
+
                 # bot.send_photo(message.from_user.id, photo_list[j+1], caption=ticket_date)
             # bot.send_photo(message.from_user.id,"https://mosmetro.ru/local/assets/imgs/special-tickets/photo_2021-11-01 16.15.34.jpeg")
 
