@@ -27,7 +27,6 @@ class Ticket:
     web_tag: bs4.element.Tag
     name: str
     date: datetime
-    images: str = dataclasses.field(default_factory=list)
 
 
 # tickets_all_on_page[0].web_tag.find_next('img').get('src') - для картинок
@@ -67,8 +66,7 @@ def get_all_tickets_on_page(url: str) -> List[Ticket]:
                     name=get_name_from_ticket_text(ticket.text),
                     date=convert_str_to_date(
                         get_date_from_ticket_text(ticket.text)
-                    ),
-                    images=get_images(ticket.text)
+                    )
                 )
             )
     return tickets
@@ -85,13 +83,53 @@ def get_tickets_by_date(
         end: datetime.datetime,
 ) -> List[Ticket]:
     l = []
-
     for d in tickets:
         if d.date >= start:
             if d.date <= end:
                 l.append(d)
-
     return l
+
+
+
+url_photo = 'https://mosmetro.ru/passengers/information/special-tickets/'
+photo_response = requests.get(url_photo)
+photo_soup = BeautifulSoup(photo_response.text, 'lxml')
+photo_url = photo_soup.find_all(width="333")
+tickets_info = photo_soup.find_all('p')
+
+tickets_on_week: List[Ticket] = get_tickets_by_date(tickets=tickets, start=start, end=end)
+amount = len(tickets_on_week)
+
+def tickets_photos(photo_url, amount, tickets_info) -> List:
+    img_url = []
+    photo = []
+    id_photo = []
+    using_id = 0
+    for i in range(len(amount) * 2):
+        for id in range(len(amount)):
+            if using_id != len(amount):
+                id_photo.append(tickets_info.index(str(tickets_on_week[id].name)) * 2)
+                id_photo.append(tickets_info.index(str(tickets_on_week[id].name)) * 2 + 1)
+                using_id += 1
+            else:
+                break
+        otriv = 0
+        rashodnik = str(photo_url[id_photo[i]]) + '"'
+        rashodnik.split('"')
+        for j in range(len(rashodnik)):
+            if rashodnik[j] == '"' and otriv != 1:
+                znach = True
+                otriv += 1
+                inde_X = j + 1
+                while znach == True:
+                    img_url.append(rashodnik[inde_X])
+                    inde_X += 1
+                    if rashodnik[inde_X] == '"':
+                        znach = False
+                photo_url_ = 'https://mosmetro.ru' + ''.join(img_url)
+                photo.append(photo_url_)
+                img_url.clear()
+    print(photo)
 
 
 @bot.message_handler(content_types=['text'])
@@ -100,11 +138,17 @@ def get_text_messages(message: Message):
         tickets_all_on_page: List[Ticket] = get_all_tickets_on_page(url=URL)
         tickets_on_week: List[Ticket] = get_tickets_by_date(tickets=tickets, start=start, end=end)
         bot.send_message(message.from_user.id, "Привет, я нашел вот такие юбилейные билеты:")
+        amount = len(tickets_on_week)
         for i in range(len(tickets_on_week)):
             ticket_name = tickets_on_week[i].name
-            ticket_date = tickets_on_week[i].date
-            bot.send_message(message.from_user.id, ticket_name, ticket_date.strftime('%d.%m.%Y'))
-            bot.send_message(message.from_user.id, tickets_all_on_page[0].web_tag.find_next('img').get('src'))
+            ticket_date = tickets_on_week[i].date.strftime('%d.%m.%Y')
+            photo_list = tickets_photos(photo_url, amount, tickets_info)
+            for j in range(len(tickets_on_week)):
+                if ticket_name in tickets_info[j]:
+                    bot.send_message(message.from_user.id, ticket_name)
+                    bot.send_photo(message.from_user.id, photo_list[j], caption=ticket_date)
+                    bot.send_photo(message.from_user.id, photo_list[j+1], caption=ticket_date)
+            # bot.send_photo(message.from_user.id,"https://mosmetro.ru/local/assets/imgs/special-tickets/photo_2021-11-01 16.15.34.jpeg")
 
     elif message.text == "/help":
         bot.send_message(message.from_user.id, 'Напишите "Проверить юбилейные билеты" или сокращенно "пюб"')

@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 from data.testing.web_site_parser import availability_of_tickets
 
-def tickets_photos(photo_url, kolvo, znach, photo, img_url):
+def tickets_photos(photo_url, kolvo, photo, img_url):
     """
     Функция делает то-то
     """
@@ -106,5 +106,7 @@ for i in range(len(itog_tickets)*2):
             img_url.clear()
 
 print(photo)
+
+
 
 # tickets_photos(photo_url, otriv, kolvo, znach, photo, img_url)
