@@ -62,7 +62,7 @@ def get_all_tickets_on_page(url: str) -> List[Ticket]:
         if 'Билет' in ticket.text:
             tickets.append(
                 Ticket(
-                    web_tag=ticket,
+                    web_tag=ticket.text,
                     name=get_name_from_ticket_text(ticket.text),
                     date=convert_str_to_date(
                         get_date_from_ticket_text(ticket.text)
@@ -100,16 +100,21 @@ tickets_info = photo_soup.find_all('p')
 tickets_on_week: List[Ticket] = get_tickets_by_date(tickets=tickets, start=start, end=end)
 amount = len(tickets_on_week)
 
-def tickets_photos(photo_url, amount, tickets_info) -> List:
+only_tickets = []
+for tickets_info in tickets_info:
+    if 'Билет' in tickets_info.text:
+        only_tickets.append(tickets_info.text)
+
+def tickets_photos(photo_url, amount, only_tickets):
     img_url = []
     photo = []
     id_photo = []
     using_id = 0
-    for i in range(len(amount) * 2):
-        for id in range(len(amount)):
-            if using_id != len(amount):
-                id_photo.append(tickets_info.index(str(tickets_on_week[id].name)) * 2)
-                id_photo.append(tickets_info.index(str(tickets_on_week[id].name)) * 2 + 1)
+    for i in range(amount * 2):
+        for id in range(amount):
+            if using_id != amount:
+                id_photo.append(only_tickets.index(tickets_on_week[id].web_tag) * 2)
+                id_photo.append(only_tickets.index(tickets_on_week[id].web_tag) * 2 + 1)
                 using_id += 1
             else:
                 break
@@ -129,8 +134,9 @@ def tickets_photos(photo_url, amount, tickets_info) -> List:
                 photo_url_ = 'https://mosmetro.ru' + ''.join(img_url)
                 photo.append(photo_url_)
                 img_url.clear()
-    print(photo)
+    return photo
 
+photo_list = tickets_photos(photo_url, amount, only_tickets)
 
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message: Message):
@@ -138,16 +144,14 @@ def get_text_messages(message: Message):
         tickets_all_on_page: List[Ticket] = get_all_tickets_on_page(url=URL)
         tickets_on_week: List[Ticket] = get_tickets_by_date(tickets=tickets, start=start, end=end)
         bot.send_message(message.from_user.id, "Привет, я нашел вот такие юбилейные билеты:")
-        amount = len(tickets_on_week)
         for i in range(len(tickets_on_week)):
             ticket_name = tickets_on_week[i].name
             ticket_date = tickets_on_week[i].date.strftime('%d.%m.%Y')
-            photo_list = tickets_photos(photo_url, amount, tickets_info)
-            for j in range(len(tickets_on_week)):
-                if ticket_name in tickets_info[j]:
-                    bot.send_message(message.from_user.id, ticket_name)
-                    bot.send_photo(message.from_user.id, photo_list[j], caption=ticket_date)
-                    bot.send_photo(message.from_user.id, photo_list[j+1], caption=ticket_date)
+            for j in range(amount):
+                bot.send_message(message.from_user.id, only_tickets[j])
+                bot.send_photo(message.from_user.id, photo_list[j], caption=ticket_date)
+                bot.send_photo(message.from_user.id, photo_list[j+1], caption=ticket_date)
+                # bot.send_photo(message.from_user.id, photo_list[j+1], caption=ticket_date)
             # bot.send_photo(message.from_user.id,"https://mosmetro.ru/local/assets/imgs/special-tickets/photo_2021-11-01 16.15.34.jpeg")
 
     elif message.text == "/help":
