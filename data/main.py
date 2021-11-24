@@ -47,12 +47,6 @@ def get_name_from_ticket_text(text: str) -> str:
     return text[start_index:end_index]
 
 
-def get_images(text: str) -> str:
-    start_index = text.find('=') + 2
-    end_index = text.find('.jpeg')
-    return text[start_index:end_index]
-
-
 def get_all_tickets_on_page(url: str) -> List[Ticket]:
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'lxml')
@@ -73,7 +67,8 @@ def get_all_tickets_on_page(url: str) -> List[Ticket]:
 
 
 tickets = get_all_tickets_on_page(url=URL)
-start = convert_str_to_date('11.11.2020') - datetime.timedelta(days=1)
+# start = datetime.datetime.today() - datetime.timedelta(days=1) #для правильной работы
+start = convert_str_to_date('10.11.2020') - datetime.timedelta(days=1) #для проверки и отладки мнодественного вывода билетов
 end = start + datetime.timedelta(days=7)
 
 
@@ -81,14 +76,13 @@ def get_tickets_by_date(
         tickets: List[Ticket],
         start: datetime.datetime,
         end: datetime.datetime,
-) -> List[Ticket]:
+    ) -> List[Ticket]:
     l = []
     for d in tickets:
         if d.date >= start:
             if d.date <= end:
                 l.append(d)
     return l
-
 
 
 url_photo = 'https://mosmetro.ru/passengers/information/special-tickets/'
@@ -105,7 +99,12 @@ for tickets_info in tickets_info:
     if 'Билет' in tickets_info.text:
         only_tickets.append(tickets_info.text)
 
-def tickets_photos(photo_url, amount, only_tickets):
+
+def tickets_photos(
+        photo_url,
+        amount,
+        only_tickets
+    ):
     img_url = []
     photo = []
     id_photo = []
@@ -136,27 +135,29 @@ def tickets_photos(photo_url, amount, only_tickets):
                 img_url.clear()
     return photo
 
+
 photo_list = tickets_photos(photo_url, amount, only_tickets)
+
 
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message: Message):
-    if message.text == "Проверить юбилейные билеты" or message.text == "проверить юбилейные билеты" or message.text == "пюб":
-        tickets_all_on_page: List[Ticket] = get_all_tickets_on_page(url=URL)
+    if message.text == "Проверить юбилейные билеты" or message.text == "проверить юбилейные билеты" or message.text == "пюб" or message.text == "Пюб":
+        # tickets_all_on_page: List[Ticket] = get_all_tickets_on_page(url=URL)
         tickets_on_week: List[Ticket] = get_tickets_by_date(tickets=tickets, start=start, end=end)
-        bot.send_message(message.from_user.id, "Привет, я нашел вот такие юбилейные билеты:")
-        id = -1
-        for i in range(len(tickets_on_week)):
-            ticket_name = tickets_on_week[i].name
-            ticket_date = tickets_on_week[i].date.strftime('%d.%m.%Y')
-            for j in range(1):
-                bot.send_message(message.from_user.id, ticket_name)
-                id += 1
-                bot.send_photo(message.from_user.id, photo_list[id], caption=ticket_date)
-                id += 1
-                bot.send_photo(message.from_user.id, photo_list[id], caption=ticket_date)
-
-                # bot.send_photo(message.from_user.id, photo_list[j+1], caption=ticket_date)
-            # bot.send_photo(message.from_user.id,"https://mosmetro.ru/local/assets/imgs/special-tickets/photo_2021-11-01 16.15.34.jpeg")
+        if len(tickets_on_week) != 0:
+            bot.send_message(message.from_user.id, "Привет, я нашел вот такие юбилейные билеты:")
+            id = -1
+            for i in range(len(tickets_on_week)):
+                ticket_name = 'Юбилейный билет в честь:' + ' ' + tickets_on_week[i].name
+                ticket_date = 'Ищите в кассах метрополитена в:' + ' ' + tickets_on_week[i].date.strftime('%d.%m.%Y')
+                for j in range(1):
+                    bot.send_message(message.from_user.id, ticket_name)
+                    id += 1
+                    bot.send_photo(message.from_user.id, photo_list[id], caption=ticket_date)
+                    id += 1
+                    bot.send_photo(message.from_user.id, photo_list[id], caption=ticket_date)
+        else:
+            bot.send_message(message.from_user.id, "Привет, на ближайшие 7 дней никаких юбилейных билетов не обнаружено. :(")
 
     elif message.text == "/help":
         bot.send_message(message.from_user.id, 'Напишите "Проверить юбилейные билеты" или сокращенно "пюб"')
