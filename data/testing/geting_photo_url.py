@@ -1,24 +1,27 @@
-import requests
 import datetime
 import calendar
+import requests
 from bs4 import BeautifulSoup
 from data.testing.web_site_parser import availability_of_tickets
 
-def tickets_photos(photo_url, otriv, kolvo, znach, photo, img_url):
+def tickets_photos(photo_url, kolvo, photo, img_url):
+    """
+    Функция делает то-то
+    """
     for i in range(kolvo):
-        otriv = 0
+        fragment = 0
         rashodnik = str(photo_url[i]) + '"'
         rashodnik.split('"')
         for j in range(len(rashodnik)):
-            if rashodnik[j] == '"' and otriv != 1:
-                znach = True
-                otriv += 1
+            if rashodnik[j] == '"' and fragment != 1:
+                meaning = True
+                fragment += 1
                 inde_X = j + 1
-                while znach == True:
+                while meaning == True:
                     img_url.append(rashodnik[inde_X])
                     inde_X += 1
                     if rashodnik[inde_X] == '"':
-                        znach = False
+                        meaning = False
                 photo_url_ = 'https://mosmetro.ru' + ''.join(img_url)
                 photo.append(photo_url_)
                 img_url.clear()
@@ -28,6 +31,7 @@ url = 'https://mosmetro.ru/passengers/information/special-tickets/'
 photo_response = requests.get(url)
 photo_soup = BeautifulSoup(photo_response.text, 'lxml')
 photo_url = photo_soup.find_all(width="333")
+
 
 
 url = 'https://mosmetro.ru/passengers/information/special-tickets/'
@@ -58,22 +62,22 @@ year = 2020
 
 last_day = calendar.monthrange(year,month)[-1]
 week_list = []
-print(availability_of_tickets(tickets_info, loop_list, day, month, year, last_day, week_list, name_tickets))
-# itog_tickets = availability_of_tickets(tickets_info, loop_list, day, month, year, last_day, week_list, name_tickets)
-itog_tickets = ['Билет «Доноры надежды» (16.11.2020)', 'Билет «10 лет новой схеме метро» (14.11.2020)', 'Билет «День качества» (12.11.2020)', 'Билет «ВХУТЕМАС 100» (11.11.2020)']
+# print(availability_of_tickets(tickets_info, loop_list, day, month, year, last_day, week_list, name_tickets))
+itog_tickets = availability_of_tickets(tickets_info, loop_list, day, month, year, last_day, week_list, name_tickets)
+# itog_tickets = ['Билет «Доноры надежды» (16.11.2020)', 'Билет «10 лет новой схеме метро» (14.11.2020)', 'Билет «День качества» (12.11.2020)', 'Билет «ВХУТЕМАС 100» (11.11.2020)']
 
 
 img_url = []
 photo = []
-znach = False
-znach2 = 0
+meaning = False
+meaning2 = 0
 otriv = 0
 kolvo = len(itog_tickets) *2 # 1 text about ticket = 2 tickets photo
 id_photo = []
 used_ide = []
 
 using_id = 0
-print(availability_of_tickets(tickets_info, loop_list, day, month, year, last_day, week_list, name_tickets))
+
 for i in range(len(itog_tickets)*2):
     for id in range(len(itog_tickets)):
         if using_id != len(itog_tickets):
@@ -82,25 +86,27 @@ for i in range(len(itog_tickets)*2):
             using_id += 1
         else:
             break
-    otriv = 0
-    # print(id_photo)
+    fragment = 0
+    print(id_photo)
     rashodnik = str(photo_url[id_photo[i]]) + '"'
-    # print(i, rashodnik)
+    print(i, rashodnik)
     rashodnik.split('"')
     for j in range(len(rashodnik)):
-        if rashodnik[j] == '"' and otriv != 1:
-            znach = True
+        if rashodnik[j] == '"' and fragment != 1:
+            meaning = True
             otriv += 1
             inde_X = j + 1
-            while znach == True:
+            while meaning == True:
                 img_url.append(rashodnik[inde_X])
                 inde_X += 1
                 if rashodnik[inde_X] == '"':
-                    znach = False
+                    meaning = False
             photo_url_ = 'https://mosmetro.ru' + ''.join(img_url)
             photo.append(photo_url_)
             img_url.clear()
 
 print(photo)
+
+
 
 # tickets_photos(photo_url, otriv, kolvo, znach, photo, img_url)

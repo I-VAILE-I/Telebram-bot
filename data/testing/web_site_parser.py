@@ -133,5 +133,5 @@ for tickets_info in tickets_info:
             # print(*tickets_info, sep='')
             name_tickets.append(''.join(tickets_info))
 
-print(name_tickets)
-print(availability_of_tickets(tickets_info, loop_list, day, month, year, last_day, week_list, name_tickets))
+# print(name_tickets)
+# print(availability_of_tickets(tickets_info, loop_list, day, month, year, last_day, week_list, name_tickets))
