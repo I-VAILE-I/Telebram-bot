@@ -26,6 +26,7 @@ def start(message):
          'Вас приветствует Бот Эйситристик, здесь вы сможете узнавать о выходе юбилейных билетов в ' +
          'Московском метрополитене. Что бы проверить информацию о билетах, '+
          'напишите команду "Проверить юбилейные билеты" или сокращенно "пюб", или нажать на соответсвтующую кнопку.', reply_markup=markup)
+    test_input = input()
 
 
 @dataclasses.dataclass
@@ -73,8 +74,9 @@ def get_all_tickets_on_page(url: str) -> List[Ticket]:
 
 
 tickets = get_all_tickets_on_page(url=URL)
-# start = datetime.datetime.today() - datetime.timedelta(days=1) #для правильной работы
+
 start = datetime.datetime.today() - datetime.timedelta(days=8) #для проверки на неделю назад, на неделю вперед
+# start = datetime.datetime.today() - datetime.timedelta(days=1) #для правильной работы
 # start = convert_str_to_date('28.10.2020') - datetime.timedelta(days=8) #для проверки и отладки мнодественного вывода билетов
 end = start + datetime.timedelta(days=14)
 
@@ -171,12 +173,16 @@ def get_text_messages(message: Message):
         bot.send_message(message.from_user.id, 'Напишите "Проверить юбилейные билеты" или сокращенно "пюб", а также работает кнопка "Проверить юбилейные билеты"')
     elif message.text == 'Про бота':
         bot.send_message(message.from_user.id,
-                        'Данный бот был создан с целью уведомлять пользователя о' +
-                        'наличии юбилейных билетов серии Единый, которые были выложены' +
+                        'Данный бот был создан с целью уведомлять пользователя о ' +
+                        'наличии юбилейных билетов серии Единый, которые были выложены ' +
                         'на официально сайте Московского метрополитена ссылка:' +
                         '\n(https://mosmetro.ru/passengers/information/special-tickets/)')
     else:
         bot.send_message(message.from_user.id, "Команда не распознана. Напишите /help.")
-
+    today = datetime.datetime.today()
+    with open("log.txt", "a") as file:
+        file.write("'" + message.text + "'" + ' - Текст пользователя' + ' ' + today.strftime("%d День %m Месяц %Y Год %H:%M:%S")
+                   + ' ' + 'Имя ' + ' ' + str(message.from_user.first_name) + ' ' + 'Фамилия' + ' ' + str(message.from_user.last_name)
+                   + ' ' + 'Айди ' + ' ' + str(message.from_user.id) + '\n')
 
 bot.polling(none_stop=True, interval=0)
