@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 import datetime
 from telebot.types import Message
 
-token = open("token.txt", "r")
+token = open("D:/TG Bot/data/token.txt", "r")
 bot = telebot.TeleBot(token.read())
 
 URL = 'https://mosmetro.ru/passengers/information/special-tickets/'
@@ -68,8 +68,9 @@ def get_all_tickets_on_page(url: str) -> List[Ticket]:
 
 tickets = get_all_tickets_on_page(url=URL)
 # start = datetime.datetime.today() - datetime.timedelta(days=1) #для правильной работы
-start = convert_str_to_date('10.11.2020') - datetime.timedelta(days=1) #для проверки и отладки мнодественного вывода билетов
-end = start + datetime.timedelta(days=7)
+start = datetime.datetime.today() - datetime.timedelta(days=8) #для проверки на неделю назад, на неделю вперед
+# start = convert_str_to_date('28.10.2020') - datetime.timedelta(days=8) #для проверки и отладки мнодественного вывода билетов
+end = start + datetime.timedelta(days=14)
 
 
 def get_tickets_by_date(
@@ -149,13 +150,14 @@ def get_text_messages(message: Message):
             id = -1
             for i in range(len(tickets_on_week)):
                 ticket_name = 'Юбилейный билет в честь:' + ' ' + tickets_on_week[i].name
-                ticket_date = 'Ищите в кассах метрополитена в:' + ' ' + tickets_on_week[i].date.strftime('%d.%m.%Y')
+                ticket_date = 'Выпущен:' + ' ' + tickets_on_week[i].date.strftime('%d.%m.%Y')
                 for j in range(1):
                     bot.send_message(message.from_user.id, ticket_name)
                     id += 1
                     bot.send_photo(message.from_user.id, photo_list[id], caption=ticket_date)
                     id += 1
                     bot.send_photo(message.from_user.id, photo_list[id], caption=ticket_date)
+            bot.send_message(message.from_user.id, "Есть шанс того, что билеты будут отсутсвовать.")
         else:
             bot.send_message(message.from_user.id, "Привет, на ближайшие 7 дней никаких юбилейных билетов не обнаружено. :(")
 
