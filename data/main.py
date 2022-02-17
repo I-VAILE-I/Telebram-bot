@@ -2,6 +2,7 @@ import dataclasses
 from typing import List
 import bs4
 import telebot
+from telebot import types
 import requests
 from bs4 import BeautifulSoup
 import datetime
@@ -14,12 +15,17 @@ URL = 'https://mosmetro.ru/passengers/information/special-tickets/'
 
 
 @bot.message_handler(commands=['start'])
-def start_message(message):
-    bot.send_message(message.chat.id, """
-    Вас приветствует Бот Эйситристик, здесь вы сможете узнавать о выходе юбилейных единых билетов в
-    Московском метрополитене. Что бы проверить информацию о билетах на ближайшие 7 
-    дней, напишите команду "Проверить юбилейные билеты" или сокращенно "пюб".
-    """)
+def start(message):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    btn1 = types.KeyboardButton("Проверить юбилейные билеты")
+    btn2 = types.KeyboardButton("Про бота")
+    btn3 = types.KeyboardButton("Помощь")
+    markup.add(btn1, btn2)
+    markup.add(btn3)
+    bot.send_message(message.chat.id,
+         'Вас приветствует Бот Эйситристик, здесь вы сможете узнавать о выходе юбилейных билетов в ' +
+         'Московском метрополитене. Что бы проверить информацию о билетах, '+
+         'напишите команду "Проверить юбилейные билеты" или сокращенно "пюб", или нажать на соответсвтующую кнопку.', reply_markup=markup)
 
 
 @dataclasses.dataclass
@@ -161,8 +167,14 @@ def get_text_messages(message: Message):
         else:
             bot.send_message(message.from_user.id, "Привет, на ближайшие 7 дней никаких юбилейных билетов не обнаружено. :(")
 
-    elif message.text == "/help":
-        bot.send_message(message.from_user.id, 'Напишите "Проверить юбилейные билеты" или сокращенно "пюб"')
+    elif message.text == "/help" or message.text == "Помощь":
+        bot.send_message(message.from_user.id, 'Напишите "Проверить юбилейные билеты" или сокращенно "пюб", а также работает кнопка "Проверить юбилейные билеты"')
+    elif message.text == 'Про бота':
+        bot.send_message(message.from_user.id,
+                        'Данный бот был создан с целью уведомлять пользователя о' +
+                        'наличии юбилейных билетов серии Единый, которые были выложены' +
+                        'на официально сайте Московского метрополитена ссылка:' +
+                        '\n(https://mosmetro.ru/passengers/information/special-tickets/)')
     else:
         bot.send_message(message.from_user.id, "Команда не распознана. Напишите /help.")
 
