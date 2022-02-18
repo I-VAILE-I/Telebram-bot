@@ -180,10 +180,10 @@ def get_text_messages(message: Message):
     else:
         bot.send_message(message.from_user.id, "Команда не распознана. Напишите /help.")
 
-    today = datetime.datetime.today()
-    with open("log.txt", "a") as file:
-        file.write("'" + message.text + "'" + ' - Текст пользователя' + ' ' + today.strftime("%d День %m Месяц %Y Год %H:%M:%S")
-                   + ' ' + 'Имя ' + ' ' + str(message.from_user.first_name) + ' ' + 'Фамилия' + ' ' + str(message.from_user.last_name)
-                   + ' ' + 'Айди ' + ' ' + str(message.from_user.id) + '\n')
+    # today = datetime.datetime.today()
+    # with open("log.txt", "a") as file:
+    #     file.write("'" + message.text + "'" + ' - Текст пользователя' + ' ' + today.strftime("%d День %m Месяц %Y Год %H:%M:%S")
+    #                + ' ' + 'Имя ' + ' ' + str(message.from_user.first_name) + ' ' + 'Фамилия' + ' ' + str(message.from_user.last_name)
+    #                + ' ' + 'Айди ' + ' ' + str(message.from_user.id) + '\n')
 
 bot.polling(none_stop=True, interval=0)
