@@ -179,6 +179,7 @@ def get_text_messages(message: Message):
                         '\n(https://mosmetro.ru/passengers/information/special-tickets/)')
     else:
         bot.send_message(message.from_user.id, "Команда не распознана. Напишите /help.")
+
     today = datetime.datetime.today()
     with open("log.txt", "a") as file:
         file.write("'" + message.text + "'" + ' - Текст пользователя' + ' ' + today.strftime("%d День %m Месяц %Y Год %H:%M:%S")
