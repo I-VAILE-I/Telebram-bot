@@ -7,13 +7,21 @@ import requests
 from bs4 import BeautifulSoup
 import datetime
 from telebot.types import Message
+from fake_useragent import UserAgent
 
 token = open("D:/TG Bot/data/token.txt", "r")
 bot = telebot.TeleBot(token.read())
 
 URL = 'https://mosmetro.ru/passengers/information/special-tickets/'
+response2 = requests.get(URL, headers={'User-Agent': UserAgent().opera})
+print(response2)
+for key, value in response2.request.headers.items():
+    print(key+": "+value)
 
-
+response = requests.get(URL)
+soup = BeautifulSoup(response.text, 'lxml')
+tickets_info = soup.find_all()
+print(tickets_info)
 @bot.message_handler(commands=['start'])
 def start(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -23,10 +31,11 @@ def start(message):
     markup.add(btn1, btn2)
     markup.add(btn3)
     bot.send_message(message.chat.id,
-         'Вас приветствует Бот Эйситристик, здесь вы сможете узнавать о выходе юбилейных билетов в ' +
-         'Московском метрополитене. Что бы проверить информацию о билетах, '+
-         'напишите команду "Проверить юбилейные билеты" или сокращенно "пюб", или нажать на соответсвтующую кнопку.', reply_markup=markup)
-    test_input = input()
+                     'Вас приветствует Бот Эйситристик, здесь вы сможете узнавать о выходе юбилейных билетов в ' +
+                     'Московском метрополитене. Что бы проверить информацию о билетах, '+
+                     'напишите команду "Проверить юбилейные билеты" или сокращенно "пюб", или нажать на соответсвтующую кнопку.', reply_markup=markup)
+    bot.send_message(message.chat.id,
+                     'Предупреждаю, ваши сообщения записываются, для выявления количества пользователей, которые пользуются ботом.')
 
 
 @dataclasses.dataclass
@@ -75,10 +84,12 @@ def get_all_tickets_on_page(url: str) -> List[Ticket]:
 
 tickets = get_all_tickets_on_page(url=URL)
 
-start = datetime.datetime.today() - datetime.timedelta(days=8) #для проверки на неделю назад, на неделю вперед
+# start = datetime.datetime.today() - datetime.timedelta(days=8) #для проверки на неделю назад, на неделю вперед
 # start = datetime.datetime.today() - datetime.timedelta(days=1) #для правильной работы
-# start = convert_str_to_date('28.10.2020') - datetime.timedelta(days=8) #для проверки и отладки мнодественного вывода билетов
+start = convert_str_to_date('28.10.2020') - datetime.timedelta(days=8) #для проверки и отладки мнодественного вывода билетов
+# start = convert_str_to_date('30.12.2021') - datetime.timedelta(days=8)
 end = start + datetime.timedelta(days=14)
+
 
 
 def get_tickets_by_date(
@@ -167,7 +178,7 @@ def get_text_messages(message: Message):
                     bot.send_photo(message.from_user.id, photo_list[id], caption=ticket_date)
             bot.send_message(message.from_user.id, "Есть шанс того, что билеты будут отсутсвовать.")
         else:
-            bot.send_message(message.from_user.id, "Привет, на ближайшие 7 дней никаких юбилейных билетов не обнаружено. :(")
+            bot.send_message(message.from_user.id, "Привет, на ближайшую неделю и прошлую никаких юбилейных билетов не обнаружено. :(")
 
     elif message.text == "/help" or message.text == "Помощь":
         bot.send_message(message.from_user.id, 'Напишите "Проверить юбилейные билеты" или сокращенно "пюб", а также работает кнопка "Проверить юбилейные билеты"')
@@ -180,10 +191,10 @@ def get_text_messages(message: Message):
     else:
         bot.send_message(message.from_user.id, "Команда не распознана. Напишите /help.")
 
-    # today = datetime.datetime.today()
-    # with open("log.txt", "a") as file:
-    #     file.write("'" + message.text + "'" + ' - Текст пользователя' + ' ' + today.strftime("%d День %m Месяц %Y Год %H:%M:%S")
-    #                + ' ' + 'Имя ' + ' ' + str(message.from_user.first_name) + ' ' + 'Фамилия' + ' ' + str(message.from_user.last_name)
-    #                + ' ' + 'Айди ' + ' ' + str(message.from_user.id) + '\n')
+    today = datetime.datetime.today()
+    with open("log.txt", "a") as file:
+        file.write("'" + message.text + "'" + ' - Текст пользователя' + ' ' + today.strftime("%d День %m Месяц %Y Год %H:%M:%S")
+                   + ' ' + 'Имя ' + ' ' + str(message.from_user.first_name) + ' ' + 'Фамилия' + ' ' + str(message.from_user.last_name)
+                   + ' ' + 'Айди ' + ' ' + str(message.from_user.id) + '\n')
 
 bot.polling(none_stop=True, interval=0)
